@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from "react"
-import axios from "axios"
+import { Client } from "@gradio/client"
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, ReferenceLine
 } from "recharts"
 
 // ═══════════════════════════════════════════════
-// BASE URL API
-// Development : kosong ("") → pakai proxy Vite ke localhost:5000
-// Production  : diisi dari environment variable VITE_API_URL
-//               (di-set di Vercel, contoh: https://sahampredict-api.onrender.com)
+// GRADIO API
+// Production: isi VITE_GRADIO_SPACE di Vercel jika Space ID berbeda.
 // ═══════════════════════════════════════════════
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || ""
+const GRADIO_SPACE = import.meta.env.VITE_GRADIO_SPACE || "zidanindratama/iqbal-saham-predict"
+let gradioClientPromise = null
+
+const getGradioClient = () => {
+  if (!gradioClientPromise) {
+    gradioClientPromise = Client.connect(GRADIO_SPACE)
+  }
+  return gradioClientPromise
+}
+
+const callGradio = async (endpoint, payload = []) => {
+  const client = await getGradioClient()
+  const result = await client.predict(endpoint, payload)
+  const data = result?.data?.[0] ?? result
+  if (data?.error) throw new Error(data.error)
+  return data
+}
 
 // ═══════════════════════════════════════════════
 // KONSTANTA
@@ -124,7 +138,7 @@ const HalamanPrediksi = () => {
   const [filterMsg, setFilterMsg] = useState("")
 
   useEffect(() => {
-    axios.get("/api/harga-sekarang").then(r => setDataHarga(r.data)).catch(() => {})
+    callGradio("/harga_sekarang").then(setDataHarga).catch(() => {})
   }, [])
 
   const handleApplyFilter = () => {
@@ -147,14 +161,14 @@ const HalamanPrediksi = () => {
     try {
       const responses = await Promise.all(
         Object.keys(BANKS).map(kode =>
-          axios.get(`/api/prediksi?kode=${kode}&hari=${horizon}&start=${startDate}&end=${endDate}&historis=9999`)
+          callGradio("/prediksi", [kode, horizon, startDate, endDate, 9999])
         )
       )
       const combined = {}
-      responses.forEach(r => { combined[r.data.kode] = r.data })
+      responses.forEach(data => { combined[data.kode] = data })
       setHasil(combined)
     } catch (e) {
-      setError("Gagal mengambil prediksi. Pastikan backend Flask berjalan di port 5000.")
+      setError(`Gagal mengambil prediksi dari Hugging Face Space. ${e.message || ""}`)
     } finally {
       setLoading(false)
     }
@@ -423,7 +437,7 @@ const HalamanRiset = () => {
 
   useEffect(() => {
     Promise.all(Object.keys(BANKS).map(k =>
-      axios.get(`/api/evaluasi?kode=${k}`).then(r => ({ kode: k, data: r.data }))
+      callGradio("/evaluasi", [k]).then(data => ({ kode: k, data }))
     )).then(results => {
       const combined = {}
       results.forEach(({ kode, data }) => { combined[kode] = data })

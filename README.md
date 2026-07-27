@@ -1,3 +1,9 @@
+---
+title: SahamPredict GRU
+sdk: gradio
+app_file: app.py
+---
+
 # SahamPredict GRU
 
 Dashboard simulasi prediksi saham bank Indonesia berbasis Flask, React, dan TensorFlow GRU.
@@ -6,6 +12,36 @@ Dashboard simulasi prediksi saham bank Indonesia berbasis Flask, React, dan Tens
 
 - `backend/`: Flask API, TensorFlow GRU, model `.h5`, dan scaler.
 - `frontend/`: React Vite dashboard untuk deploy ke Vercel.
+- `app.py`: Gradio backend untuk deploy gratis ke Hugging Face Spaces.
+- `requirements.txt`: dependency untuk Hugging Face Gradio Space.
+
+## Deploy Backend ke Hugging Face Spaces
+
+1. Buat Space baru di Hugging Face.
+2. Pilih **Manual setup**.
+3. Space SDK: **Gradio**.
+4. Template: **Blank**.
+5. Hardware: **CPU Basic** atau opsi free yang tersedia.
+6. Visibility: **Public**.
+7. Setelah Space dibuat, push repo ini ke remote Space Hugging Face.
+
+Contoh remote Hugging Face:
+
+```bash
+git remote add hf https://huggingface.co/spaces/zidanindratama/iqbal-saham-predict
+git push hf main
+```
+
+Gradio backend menyediakan endpoint:
+
+```txt
+/harga_sekarang
+/prediksi
+/evaluasi
+/status_model
+```
+
+Endpoint tersebut dipanggil frontend lewat `@gradio/client`.
 
 ## Deploy Frontend ke Vercel
 
@@ -17,103 +53,22 @@ Dashboard simulasi prediksi saham bank Indonesia berbasis Flask, React, dan Tens
 6. Tambahkan environment variable:
 
 ```txt
-VITE_API_URL=https://URL-BACKEND-KAMU
-```
-
-Contoh setelah backend Render jadi:
-
-```txt
-VITE_API_URL=https://sahampredict-api.onrender.com
-```
-
-## Deploy Backend ke Render
-
-Ada tiga cara: pakai Blueprint dari `render.yaml`, Web Service via GitHub App, atau Web Service dari public repo URL.
-
-### Opsi 1: Blueprint
-
-1. Push repo ini ke GitHub.
-2. Di Render pilih **New +** lalu **Blueprint**.
-3. Connect repository GitHub.
-4. Render akan membaca `render.yaml` dan membuat service `sahampredict-api`.
-5. Service diset ke `plan: free` dan region `singapore`.
-6. Setelah service jadi, buka **Environment** dan ganti:
-
-```txt
-CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
-```
-
-### Opsi 2: Web Service via GitHub App
-
-1. Di Render pilih **New +** lalu **Web Service**.
-2. Connect repository GitHub.
-3. Root Directory: `backend`.
-4. Runtime: `Python`.
-5. Instance Type: `Free`.
-6. Region: `Singapore`.
-7. Build Command:
-
-```bash
-pip install -r requirements.txt
-```
-
-8. Start Command:
-
-```bash
-gunicorn app:app --bind 0.0.0.0:$PORT --timeout 180
-```
-
-9. Tambahkan Environment Variables:
-
-```txt
-PYTHON_VERSION=3.11.9
-CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
-```
-
-### Opsi 3: Public Git Repository
-
-Pakai opsi ini kalau Render sudah dihubungkan ke GitHub, tapi repo tetap tidak muncul.
-
-1. Di Render pilih **New +** lalu **Web Service**.
-2. Di bagian **Source Code**, pilih tab **Public Git Repository**.
-3. Masukkan URL repo:
-
-```txt
-https://github.com/zidanindratama/iqbal-saham-predict
-```
-
-4. Isi konfigurasi yang sama seperti opsi manual:
-
-```txt
-Name: sahampredict-api
-Root Directory: backend
-Runtime: Python
-Instance Type: Free
-Region: Singapore
-Build Command: pip install -r requirements.txt
-Start Command: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 180
-```
-
-5. Tambahkan Environment Variables:
-
-```txt
-PYTHON_VERSION=3.11.9
-CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
+VITE_GRADIO_SPACE=zidanindratama/iqbal-saham-predict
 ```
 
 ## Alur Deploy
 
 1. Push project ke GitHub.
-2. Deploy backend ke Render.
-3. Salin URL Render, misalnya `https://sahampredict-api.onrender.com`.
-4. Masukkan URL itu ke Vercel sebagai `VITE_API_URL`.
-5. Deploy frontend ke Vercel.
+2. Buat Hugging Face Space dengan SDK Gradio.
+3. Push repo ke remote Hugging Face Space.
+4. Deploy frontend di Vercel dengan `VITE_GRADIO_SPACE`.
+5. Redeploy frontend setiap kali env berubah.
 
 ## Command Git
 
 ```bash
 git status
 git add -A
-git commit -m "Update deployment instructions"
+git commit -m "Add Hugging Face Gradio backend"
 git push origin main
 ```
