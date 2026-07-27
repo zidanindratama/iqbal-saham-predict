@@ -145,7 +145,7 @@ def evaluasi(kode: str = "BBNI.JK") -> dict:
         "nama": STOCKS[kode],
         "model": "GRU",
         "fitur": FEATURES,
-        "hasil": EVAL_DATA[kode],
+        "hasil": {str(horizon): metrics for horizon, metrics in EVAL_DATA[kode].items()},
     }
 
 
