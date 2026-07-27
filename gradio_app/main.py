@@ -17,7 +17,7 @@ from backend.app import (
 )
 
 
-def harga_sekarang():
+def harga_sekarang() -> dict:
     hasil = {}
     for kode, nama in STOCKS.items():
         try:
@@ -49,7 +49,13 @@ def harga_sekarang():
     return hasil
 
 
-def prediksi(kode="BBNI.JK", hari=7, start="2021-06-01", end="2026-06-30", historis=9999):
+def prediksi(
+    kode: str = "BBNI.JK",
+    hari: int = 7,
+    start: str = "2021-06-01",
+    end: str = "2026-06-30",
+    historis: int = 9999,
+) -> dict:
     kode = str(kode)
     hari = int(hari)
     historis = int(historis)
@@ -129,7 +135,7 @@ def prediksi(kode="BBNI.JK", hari=7, start="2021-06-01", end="2026-06-30", histo
         return {"error": str(e)}
 
 
-def evaluasi(kode="BBNI.JK"):
+def evaluasi(kode: str = "BBNI.JK") -> dict:
     kode = str(kode)
     if kode not in EVAL_DATA:
         return {"error": "Kode tidak valid"}
@@ -142,7 +148,7 @@ def evaluasi(kode="BBNI.JK"):
     }
 
 
-def status_model():
+def status_model() -> dict:
     return {
         k: {
             "GRU": "siap" if k in MODELS else "belum_ada",
@@ -152,7 +158,7 @@ def status_model():
     }
 
 
-def prediksi_pretty(kode, hari, start, end):
+def prediksi_pretty(kode: str, hari: int, start: str, end: str) -> str:
     return json.dumps(prediksi(kode, hari, start, end, 180), indent=2, ensure_ascii=False)
 
 
