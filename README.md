@@ -28,7 +28,7 @@ VITE_API_URL=https://sahampredict-api.onrender.com
 
 ## Deploy Backend ke Render
 
-Ada dua cara: pakai Blueprint dari `render.yaml`, atau setup manual.
+Ada tiga cara: pakai Blueprint dari `render.yaml`, Web Service via GitHub App, atau Web Service dari public repo URL.
 
 ### Opsi 1: Blueprint
 
@@ -43,7 +43,7 @@ Ada dua cara: pakai Blueprint dari `render.yaml`, atau setup manual.
 CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
 ```
 
-### Opsi 2: Web Service Manual
+### Opsi 2: Web Service via GitHub App
 
 1. Di Render pilih **New +** lalu **Web Service**.
 2. Connect repository GitHub.
@@ -70,6 +70,37 @@ PYTHON_VERSION=3.11.9
 CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
 ```
 
+### Opsi 3: Public Git Repository
+
+Pakai opsi ini kalau Render sudah dihubungkan ke GitHub, tapi repo tetap tidak muncul.
+
+1. Di Render pilih **New +** lalu **Web Service**.
+2. Di bagian **Source Code**, pilih tab **Public Git Repository**.
+3. Masukkan URL repo:
+
+```txt
+https://github.com/zidanindratama/iqbal-saham-predict
+```
+
+4. Isi konfigurasi yang sama seperti opsi manual:
+
+```txt
+Name: sahampredict-api
+Root Directory: backend
+Runtime: Python
+Instance Type: Free
+Region: Singapore
+Build Command: pip install -r requirements.txt
+Start Command: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 180
+```
+
+5. Tambahkan Environment Variables:
+
+```txt
+PYTHON_VERSION=3.11.9
+CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
+```
+
 ## Alur Deploy
 
 1. Push project ke GitHub.
@@ -81,9 +112,8 @@ CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
 ## Command Git
 
 ```bash
-git add .
-git commit -m "Configure Vercel frontend and Render backend deployment"
-git branch -M main
-git remote add origin https://github.com/USERNAME/sahampredict.git
-git push -u origin main
+git status
+git add -A
+git commit -m "Update deployment instructions"
+git push origin main
 ```
