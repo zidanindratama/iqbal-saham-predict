@@ -8,7 +8,10 @@ import os, json, warnings
 warnings.filterwarnings("ignore")
 
 app  = Flask(__name__, static_folder="static", static_url_path="")
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors_origins = os.environ.get("CORS_ORIGINS", "*")
+if cors_origins != "*":
+    cors_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+CORS(app, resources={r"/api/*": {"origins": cors_origins}})
 
 # ═══════════════════════════════════════════════
 # KONSTANTA — sesuai notebook GRU multi-fitur
