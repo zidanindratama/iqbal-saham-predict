@@ -40,7 +40,7 @@ Ada dua cara: pakai Blueprint dari `render.yaml`, atau setup manual.
 6. Setelah service jadi, buka **Environment** dan ganti:
 
 ```txt
-CORS_ORIGINS=https://domain-frontend-vercel-kamu.vercel.app
+CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
 ```
 
 ### Opsi 2: Web Service Manual
@@ -67,7 +67,7 @@ gunicorn app:app --bind 0.0.0.0:$PORT --timeout 180
 
 ```txt
 PYTHON_VERSION=3.11.9
-CORS_ORIGINS=https://domain-vercel-kamu.vercel.app
+CORS_ORIGINS=https://iqbal-saham-predict.vercel.app
 ```
 
 ## Alur Deploy
