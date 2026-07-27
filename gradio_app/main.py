@@ -2,6 +2,7 @@ import json
 
 import gradio as gr
 import pandas as pd
+import spaces
 import yfinance as yf
 
 from backend.app import (
@@ -162,6 +163,11 @@ def prediksi_pretty(kode: str, hari: int, start: str, end: str) -> str:
     return json.dumps(prediksi(kode, hari, start, end, 180), indent=2, ensure_ascii=False)
 
 
+@spaces.GPU
+def gpu_ping() -> str:
+    return "ok"
+
+
 def create_demo():
     with gr.Blocks(title="SahamPredict GRU") as demo:
         gr.Markdown("# SahamPredict GRU")
@@ -187,5 +193,6 @@ def create_demo():
         gr.api(prediksi, api_name="prediksi")
         gr.api(evaluasi, api_name="evaluasi")
         gr.api(status_model, api_name="status_model")
+        gr.api(gpu_ping, api_name="gpu_ping")
 
     return demo
