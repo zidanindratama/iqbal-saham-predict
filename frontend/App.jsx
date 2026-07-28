@@ -658,7 +658,6 @@ export default function App() {
             }}>{p.label}</button>
           ))}
         </div>
-        <Badge color="#8b5cf6">GRU · Informatika</Badge>
       </nav>
       <main style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto" }}>
         {page === "prediksi" && <HalamanPrediksi />}
