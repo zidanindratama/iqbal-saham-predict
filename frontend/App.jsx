@@ -31,9 +31,9 @@ const callGradio = async (endpoint, payload = []) => {
 // KONSTANTA
 // ═══════════════════════════════════════════════
 const BANKS = {
-  "BBNI.JK": { name: "Bank BNI",        short: "BBNI", color: "#2196F3" },
-  "BMRI.JK": { name: "Bank Mandiri",    short: "BMRI", color: "#4CAF50" },
-  "BNGA.JK": { name: "Bank CIMB Niaga", short: "BNGA", color: "#FF5722" },
+  "BBNI.JK": { name: "Bank A", short: "A", color: "#2196F3" },
+  "BMRI.JK": { name: "Bank B", short: "B", color: "#4CAF50" },
+  "BNGA.JK": { name: "Bank C", short: "C", color: "#FF5722" },
 }
 const HORIZONS = [7, 14, 30]
 
@@ -196,7 +196,7 @@ const HalamanPrediksi = () => {
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 20, fontWeight: 700, ...mono, color: "#e2e8f0" }}>Dashboard Simulasi Prediksi Saham Bank</div>
         <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
-          Model GRU · Fitur: Closing Price, Volume, RSI(14), Kurs USD/IDR · BBNI · BMRI · BNGA
+          Model GRU · Fitur: Closing Price, Volume, RSI(14), Kurs USD/IDR · Bank A · Bank B · Bank C
         </div>
       </div>
 
@@ -448,9 +448,9 @@ const HalamanRiset = () => {
   // Bar chart — MAPE per horizon per bank
   const barData = evalData ? HORIZONS.map(h => ({
     name: `H+${h}`,
-    BBNI: evalData["BBNI.JK"]?.hasil?.[h]?.mape || 0,
-    BMRI: evalData["BMRI.JK"]?.hasil?.[h]?.mape || 0,
-    BNGA: evalData["BNGA.JK"]?.hasil?.[h]?.mape || 0,
+    bankA: evalData["BBNI.JK"]?.hasil?.[h]?.mape || 0,
+    bankB: evalData["BMRI.JK"]?.hasil?.[h]?.mape || 0,
+    bankC: evalData["BNGA.JK"]?.hasil?.[h]?.mape || 0,
   })) : []
 
   return (
@@ -458,7 +458,7 @@ const HalamanRiset = () => {
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 20, fontWeight: 700, ...mono, color: "#e2e8f0" }}>Evaluasi Model GRU</div>
         <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
-          MAE · RMSE · MAPE · Multi-Horizon (7/14/30 hari) · BBNI · BMRI · BNGA
+          MAE · RMSE · MAPE · Multi-Horizon (7/14/30 hari) · Bank A · Bank B · Bank C
         </div>
       </div>
 
@@ -499,9 +499,9 @@ const HalamanRiset = () => {
                 <Tooltip contentStyle={{ background: "#0f1528", border: "1px solid #1e2d4a", borderRadius: 8 }}
                   formatter={v => [`${v.toFixed(2)}%`]} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="BBNI" fill="#2196F3" radius={[4,4,0,0]} />
-                <Bar dataKey="BMRI" fill="#4CAF50" radius={[4,4,0,0]} />
-                <Bar dataKey="BNGA" fill="#FF5722" radius={[4,4,0,0]} />
+                <Bar dataKey="bankA" name="Bank A" fill="#2196F3" radius={[4,4,0,0]} />
+                <Bar dataKey="bankB" name="Bank B" fill="#4CAF50" radius={[4,4,0,0]} />
+                <Bar dataKey="bankC" name="Bank C" fill="#FF5722" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -553,7 +553,7 @@ const HalamanRiset = () => {
             <div style={{ fontSize: 11, fontWeight: 600, color: "#3b82f6", marginBottom: 8, ...mono }}>📝 KESIMPULAN EVALUASI</div>
             <div style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.7 }}>
               Model GRU dengan fitur multi-variabel (Closing Price, Volume, RSI, dan Kurs USD/IDR) berhasil memprediksi harga saham perbankan Indonesia
-              dengan MAPE terbaik pada saham BNGA (H+7: 2.30%). Secara umum, akurasi prediksi menurun seiring bertambahnya horizon prediksi,
+              dengan MAPE terbaik pada Bank C (H+7: 2.30%). Secara umum, akurasi prediksi menurun seiring bertambahnya horizon prediksi,
               yang merupakan karakteristik umum model time series. Evaluasi menggunakan metode Walk-Forward Validation dengan Rolling Origin
               untuk memastikan hasil yang representatif terhadap kondisi pasar nyata.
             </div>
@@ -576,7 +576,7 @@ const HalamanTentang = () => (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
       {[
         { title: "DETAIL PENELITIAN", color: "#3b82f6", items: [
-          ["Objek", "BBNI (Bank BNI), BMRI (Bank Mandiri), BNGA (Bank CIMB Niaga)"],
+          ["Objek", "Bank A, Bank B, dan Bank C"],
           ["Periode Data", "1 Juni 2021 – 30 Juni 2026"],
           ["Metodologi", "CRISP-DM + Prototyping"],
           ["Metrik", "MAE, RMSE, MAPE"],
@@ -646,7 +646,6 @@ export default function App() {
       }}>
         <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: "#3b82f6", letterSpacing: "0.1em" }}>
           SAHAM<span style={{ color: "#475569" }}>PREDICT</span>
-          <span style={{ fontSize: 10, color: "#475569", marginLeft: 8 }}>v3.0</span>
         </div>
         <div style={{ display: "flex", gap: 4 }}>
           {pages.map(p => (
